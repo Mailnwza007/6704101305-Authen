@@ -2,15 +2,19 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // open cors
   app.enableCors();
+  app.use(helmet());
+  // use global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // ลบ property ที่ไม่ได้ระบุใน DTO ออก
-      forbidNonWhitelisted: true, // แจ้งข้อผิดพลาดถ้ามี property ที่ไม่ได้ระบุใน DTO
-      transform: true,// แปลง payload ให้ตรงกับประเภทใน DTO
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
   await app.listen(process.env.PORT ?? 3000);
